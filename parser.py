@@ -51,17 +51,17 @@ class Time:
 
 
 def get_offset_type(unit: str) -> OffsetType:
-    if unit == "seconds" or unit == "secs":
+    if unit == "seconds" or unit == "secs" or unit == "second" or unit == "sec":
         return OffsetType.SECONDS
-    elif unit == "minutes" or unit == "mins":
+    elif unit == "minutes" or unit == "mins" or unit == "minute" or unit == "min":
         return OffsetType.MINUTES
-    elif unit == "hours" or unit == "hrs":
+    elif unit == "hours" or unit == "hrs" or unit == "hour" or unit == "hr":
         return OffsetType.HOURS
-    elif unit == "days":
+    elif unit == "days" or unit == "day":
         return OffsetType.DAYS
-    elif unit == "months":
+    elif unit == "months" or unit == "month":
         return OffsetType.MONTHS
-    elif unit == "years" or unit == "yrs":
+    elif unit == "years" or unit == "yrs" or unit == "year" or unit == "yr":
         return OffsetType.YEARS
 
 
