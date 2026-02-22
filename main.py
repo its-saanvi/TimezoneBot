@@ -96,7 +96,7 @@ async def on_message(message):
     if fetches is None:
         cursor.close()
         return
-    timezone = cursor.fetchone()[0]
+    timezone = fetches[0]
     cursor.close()
 
     timezones = parse_message(message.content, timezone)
