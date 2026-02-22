@@ -106,10 +106,10 @@ def parse_message(message: str, user_timezone: str) -> List[Time]:
         unix_time = parse_relative_group(relative_group)
         timezone = Time(relative_group, unix_time, TimeType.RELATIVE)
         groups.append(timezone)
-    absolute_groups = re.findall(r"`(\d+:?\d?\d? \w+)`", message)
-    for absolute_groups in absolute_groups:
-        unix_time = parse_absolute_group(absolute_groups, user_timezone)
-        timezone = Time(absolute_groups, unix_time, TimeType.ABSOLUTE)
+    absolute_groups = re.findall(r"`(\d?\d:\d\d \w+)`", message)
+    for absolute_group in absolute_groups:
+        unix_time = parse_absolute_group(absolute_group, user_timezone)
+        timezone = Time(absolute_group, unix_time, TimeType.ABSOLUTE)
         groups.append(timezone)
 
     return groups
