@@ -16,15 +16,15 @@ table_name = "user_timezones"
 bot = commands.Bot(command_prefix="$", intents=intents)
 
 
-async def all_actions(interaction: discord.Interaction, current: str):
-    action_choices = []
-    action_choices.append(app_commands.Choice(name="set", value="set"))
-    action_choices.append(app_commands.Choice(name="get", value="get"))
-    return action_choices
-
-
 @bot.tree.command(name="timezone", description="Manage your current timezone")
-@app_commands.autocomplete(action=all_actions)
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="set", value="set"),
+        app_commands.Choice(name="get", value="get"),
+        app_commands.Choice(name="delete", value="delete"),
+        app_commands.Choice(name="update", value="update"),
+    ]
+)
 @app_commands.describe(
     action="Action to perform",
     timezone="Timezone to set in IANA database format e.g. America/New_York",
@@ -51,6 +51,21 @@ async def timezone(
         cursor.execute(f"SELECT timezone FROM {table_name} WHERE id={user_id}")
         timezone = cursor.fetchone()[0]
         await interaction.followup.send(content=f"Your current timezone is {timezone}")
+    elif action == "delete":
+        cursor.execute(f"DELETE FROM {table_name} WHERE id={user_id}")
+        conn.commit()
+        await interaction.followup.send(content="Successfully deleted your timezone")
+    elif action == "update":
+        if timezone is None:
+            await interaction.followup.send(content="Please provide a timezone")
+            return
+        cursor.execute(
+            f"UPDATE {table_name} SET timezone=? WHERE id=?", (timezone, user_id)
+        )
+        conn.commit()
+        await interaction.followup.send(
+            content=f"Successfully updated your timezone to {timezone}"
+        )
     cursor.close()
 
 
@@ -85,6 +100,9 @@ async def on_message(message):
     message_content = ""
     for timezone in timezones:
         message_content += f"\n`{timezone.original_time}`: {timezone.unix_time}"
+
+    if message_content == "":
+        return
 
     await message.reply(message_content.strip())
 
