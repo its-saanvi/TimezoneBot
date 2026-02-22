@@ -92,6 +92,10 @@ async def on_message(message):
     user_id = message.author.id
     cursor = conn.cursor()
     cursor.execute(f"SELECT timezone FROM {table_name} WHERE id={user_id}")
+    fetches = cursor.fetchone()
+    if fetches is None:
+        cursor.close()
+        return
     timezone = cursor.fetchone()[0]
     cursor.close()
 
