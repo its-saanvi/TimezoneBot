@@ -11,7 +11,7 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.message_content = True
 
-conn = sqlite3.connect("timezone-bot.db")
+conn = sqlite3.connect("/app/data/timezone-bot.db")
 table_name = "user_timezones"
 bot = commands.Bot(command_prefix="$", intents=intents)
 
@@ -49,7 +49,11 @@ async def timezone(
         )
     elif action == "get":
         cursor.execute(f"SELECT timezone FROM {table_name} WHERE id={user_id}")
-        timezone = cursor.fetchone()[0]
+        fetches = cursor.fetchone()
+        if fetches is None:
+            cursor.close()
+            return
+        timezone = fetches[0]
         await interaction.followup.send(content=f"Your current timezone is {timezone}")
     elif action == "delete":
         cursor.execute(f"DELETE FROM {table_name} WHERE id={user_id}")
